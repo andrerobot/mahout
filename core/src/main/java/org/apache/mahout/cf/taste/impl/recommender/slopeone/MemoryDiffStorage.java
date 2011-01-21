@@ -240,8 +240,13 @@ public final class MemoryDiffStorage implements DiffStorage {
       averageDiffs.clear();
       long averageCount = 0L;
       LongPrimitiveIterator it = dataModel.getUserIDs();
-      while (it.hasNext()) {
-        averageCount = processOneUser(averageCount, it.nextLong());
+
+      try {
+          while (it.hasNext()) {
+            averageCount = processOneUser(averageCount, it.nextLong());
+          }
+      } catch (NullPointerException e) {
+          log.info("Avoiding MysqlConnector NullPointerExecption bug on rs.getLong().", e);
       }
       
       pruneInconsequentialDiffs();
